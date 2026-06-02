@@ -90,7 +90,7 @@ jobs:
           api-level: 34
           arch: x86_64
           target: default
-          force-avd-creation: false
+          force-avd-creation: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: bash .github/scripts/wallet-business-regression.sh
