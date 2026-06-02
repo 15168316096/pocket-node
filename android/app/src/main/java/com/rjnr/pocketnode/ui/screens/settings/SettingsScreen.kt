@@ -86,6 +86,7 @@ import com.rjnr.pocketnode.data.wallet.ThemeMode
 import com.rjnr.pocketnode.ui.education.EducationSheet
 import com.rjnr.pocketnode.ui.education.EducationTopic
 import com.rjnr.pocketnode.ui.theme.CkbWalletTheme
+import com.rjnr.pocketnode.ui.util.uaTestTag
 import androidx.compose.ui.res.stringResource
 import com.rjnr.pocketnode.ui.theme.PendingAmber
 
@@ -232,7 +233,7 @@ fun SettingsScreen(
                 )
             },
             confirmButton = {
-                Button(onClick = { viewModel.confirmNetworkSwitch() }) {
+                Button(modifier = Modifier.uaTestTag("settings-network-confirm"), onClick = { viewModel.confirmNetworkSwitch() }) {
                     Text(stringResource(R.string.settings_switch_restart))
                 }
             },
@@ -517,6 +518,7 @@ private fun SettingsScreenUI(
                     title = "Current Network",
                     value = "CKB ${uiState.currentNetwork.displayName}",
                     valueColor = if (isTestnet) ColorAmber else MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.uaTestTag("settings-current-network"),
                     onClick = {
                         val target = if (isTestnet) NetworkType.MAINNET else NetworkType.TESTNET
                         requestNetworkSwitch(target)
@@ -701,11 +703,12 @@ fun SettingsValueRow(
     title: String,
     value: String,
     onClick: (() -> Unit)?,
+    modifier: Modifier = Modifier,
     valueColor: Color = MaterialTheme.colorScheme.primary,
     trailing: (@Composable RowScope.() -> Unit)? = null
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
             .background(MaterialTheme.colorScheme.surfaceVariant)

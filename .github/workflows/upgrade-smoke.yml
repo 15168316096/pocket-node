@@ -134,7 +134,7 @@ jobs:
           api-level: 34
           arch: x86_64
           target: default
-          force-avd-creation: false
+          force-avd-creation: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           # The action's inline-script splitter mangles multi-line shell

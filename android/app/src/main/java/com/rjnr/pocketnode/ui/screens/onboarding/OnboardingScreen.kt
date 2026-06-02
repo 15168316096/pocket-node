@@ -181,7 +181,7 @@ fun OnboardingScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
+                TextButton(modifier = Modifier.uaTestTag("wallet-name-create"), onClick = {
                     showNameDialog = false
                     viewModel.createNewWallet(pendingWalletName)
                 }) {
@@ -210,7 +210,7 @@ fun OnboardingScreen(
                 )
             },
             confirmButton = {
-                TextButton(onClick = {
+                TextButton(modifier = Modifier.uaTestTag("no-lock-continue"), onClick = {
                     showNoDeviceLockWarning = false
                     showNameDialog = true
                 }) {
