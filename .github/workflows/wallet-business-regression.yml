@@ -1,0 +1,110 @@
+name: Wallet Business Regression
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: wallet-business-regression-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  wallet-business-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Android NDK
+        id: setup-ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r27c
+          add-to-path: false
+
+      - name: Export ANDROID_NDK_HOME
+        env:
+          NDK_PATH: ${{ steps.setup-ndk.outputs.ndk-path }}
+        run: echo "ANDROID_NDK_HOME=$NDK_PATH" >> $GITHUB_ENV
+
+      - name: Set up Rust (stable + Android target)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-linux-android
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-jni-${{ hashFiles('android/**/*.gradle.kts', 'android/gradle/libs.versions.toml') }}
+          restore-keys: gradle-jni-
+
+      - name: Cache Cargo target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            external/ckb-light-client/target
+          key: cargo-wallet-regression-${{ hashFiles('external/ckb-light-client/Cargo.lock') }}
+          restore-keys: cargo-wallet-regression-
+
+      - name: Create dummy google-services.json
+        run: |
+          cat > android/app/google-services.json << 'GSEOF'
+          {
+            "project_info": { "project_number": "0", "project_id": "dummy", "storage_bucket": "dummy.appspot.com" },
+            "client": [{ "client_info": { "mobilesdk_app_id": "1:0:android:0", "android_client_info": { "package_name": "com.rjnr.pocketnode" } }, "api_key": [{ "current_key": "dummy" }] }],
+            "configuration_version": "1"
+          }
+          GSEOF
+
+      - name: Build debug APK + androidTest APK
+        working-directory: android
+        env:
+          BUILD_X86_64: "1"
+        run: ./gradlew assembleDebug assembleDebugAndroidTest
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run wallet business regression on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: default
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: bash .github/scripts/wallet-business-regression.sh
+
+      - name: Upload wallet regression artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wallet-business-regression-artifacts
+          path: |
+            wallet-business-*.log
+            wallet-business-*.png
+            wallet-business-*.xml
+            fail-*.png
+            fail-*.xml
+          if-no-files-found: warn
+          retention-days: 7

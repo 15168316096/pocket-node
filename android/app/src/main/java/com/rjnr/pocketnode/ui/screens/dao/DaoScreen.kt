@@ -32,6 +32,7 @@ import com.rjnr.pocketnode.ui.screens.dao.components.DaoDepositCard
 import com.rjnr.pocketnode.ui.screens.dao.components.DepositBottomSheet
 import com.rjnr.pocketnode.ui.theme.PendingAmber
 import com.rjnr.pocketnode.ui.theme.TestnetOrange
+import com.rjnr.pocketnode.ui.util.uaTestTag
 
 private val DaoGreen = Color(0xFF1ED882)
 
@@ -419,7 +420,7 @@ private fun DaoOverviewCard(
 
             Button(
                 onClick = onDepositClick,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().uaTestTag("dao-deposit-open"),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(stringResource(R.string.dao_deposit_cta))
@@ -510,6 +511,7 @@ private fun DaoEmptyState(onDepositClick: () -> Unit) {
 
         Button(
             onClick = onDepositClick,
+            modifier = Modifier.uaTestTag("dao-deposit-open"),
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(stringResource(R.string.dao_make_first_deposit))

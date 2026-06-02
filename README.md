@@ -125,6 +125,16 @@ cd android
 ./gradlew test -x cargoBuild
 ```
 
+### Wallet business regression CI
+
+The `Wallet Business Regression` workflow builds the debug APK and androidTest APK with the x86_64 JNI artifact, then runs `WalletBusinessRegressionTest` on an emulator from a clean app data directory per scenario. It covers two high-value paths:
+
+- Create wallet: first-run create flow, no-device-lock advisory on CI emulators, wallet naming, mnemonic display, and the mnemonic verification gate.
+- Import wallet: fixed BIP39 recovery phrase import, sync-mode sheet dismissal when shown, mandatory PIN setup and confirmation, home sync/status rendering, receive address/copy controls, send form reachability, DAO deposit form reachability, and Settings network-switch confirmation reachability.
+
+The transfer and DAO checks intentionally stop before broadcasting or locking funds. They validate the full UI/business entrypoints and form wiring without depending on faucet balance, chain timing, or a live peer set. Upgrade coverage remains in `Upgrade Smoke`, which installs the previous-main APK, seeds wallet state, performs an `install -r` over it, and asserts the upgraded APK can unlock and render Home.
+
+
 Release signing fails closed without the `KEYSTORE_PATH`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and `KEY_PASSWORD` environment variables. This is by design; locally-built release APKs cannot accidentally sign with the debug keystore.
 
 ## Project structure

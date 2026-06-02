@@ -90,6 +90,7 @@ import com.rjnr.pocketnode.ui.theme.CkbWalletTheme
 import com.rjnr.pocketnode.ui.theme.ErrorRed
 import com.rjnr.pocketnode.ui.theme.PendingAmber
 import com.rjnr.pocketnode.ui.theme.SuccessGreen
+import com.rjnr.pocketnode.ui.util.uaTestTag
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -347,6 +348,7 @@ private fun SendScreenUI(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .uaTestTag("send-recipient")
                     .height(62.dp)
                     .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
                     .padding(horizontal = 16.dp),
@@ -486,6 +488,7 @@ private fun SendScreenUI(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .uaTestTag("send-amount")
                     .height(56.dp)
                     .background(
                         MaterialTheme.colorScheme.surfaceVariant,
@@ -610,6 +613,7 @@ private fun SendScreenUI(
                 onClick = { sendTransaction() },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .uaTestTag("send-submit")
                     .height(56.dp),
                 enabled = !uiState.isLoading &&
                         uiState.recipientAddress.isNotBlank() &&

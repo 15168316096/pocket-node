@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rjnr.pocketnode.R
 import com.rjnr.pocketnode.data.gateway.DaoConstants
+import com.rjnr.pocketnode.ui.util.uaTestTag
 import com.rjnr.pocketnode.util.sanitizeAmount
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,6 +84,7 @@ fun DepositBottomSheet(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .uaTestTag("dao-deposit-amount")
                     .height(56.dp)
                     .background(
                         MaterialTheme.colorScheme.surfaceVariant,
@@ -250,7 +252,7 @@ fun DepositBottomSheet(
                 Button(
                     onClick = { onDeposit(amountShannons) },
                     enabled = isValid,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).uaTestTag("dao-deposit-submit"),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(stringResource(R.string.dao_sheet_deposit))

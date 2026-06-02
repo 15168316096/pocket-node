@@ -34,6 +34,7 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.rjnr.pocketnode.data.gateway.models.NetworkType
 import com.rjnr.pocketnode.ui.screens.home.HomeViewModel
 import com.rjnr.pocketnode.ui.theme.PendingAmber
+import com.rjnr.pocketnode.ui.util.uaTestTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -173,6 +174,7 @@ fun ReceiveScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .uaTestTag("receive-address")
                     .clip(RoundedCornerShape(12.dp))
                     .background(MaterialTheme.colorScheme.surface)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
@@ -214,6 +216,7 @@ fun ReceiveScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .uaTestTag("receive-copy-address")
                     .height(56.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)

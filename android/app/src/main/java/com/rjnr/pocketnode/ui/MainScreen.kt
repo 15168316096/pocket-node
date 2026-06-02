@@ -35,6 +35,7 @@ import com.rjnr.pocketnode.ui.screens.home.HomeScreen
 import com.rjnr.pocketnode.ui.screens.settings.SettingsScreen
 import com.rjnr.pocketnode.ui.theme.CkbWalletTheme
 import com.rjnr.pocketnode.ui.update.UpdateBannerViewModel
+import com.rjnr.pocketnode.ui.util.uaTestTag
 
 @Composable
 fun MainScreen(
@@ -103,6 +104,7 @@ fun MainScreen(
                                     restoreState = true
                                 }
                             },
+                            modifier = Modifier.uaTestTag("tab-${tab.route.removePrefix("tab_")}"),
                             icon = {
                                 Icon(
                                     imageVector = tabIcon(tab, selected),

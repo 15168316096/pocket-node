@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rjnr.pocketnode.R
 import com.rjnr.pocketnode.data.gateway.GatewayRepository
+import com.rjnr.pocketnode.ui.util.uaTestTag
 import com.rjnr.pocketnode.util.toHex
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -298,7 +299,7 @@ private fun MnemonicDisplayStep(
         // Word grid: 3 cols on phones (~110dp each), more on Medium/Expanded.
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 110.dp),
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).uaTestTag("mnemonic-words"),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -334,7 +335,7 @@ private fun MnemonicDisplayStep(
         // Continue button
         Button(
             onClick = onNext,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().uaTestTag("mnemonic-display-next"),
             enabled = words.isNotEmpty()
         ) {
             Text(nextButtonLabel)
@@ -354,6 +355,7 @@ private fun MnemonicVerifyStep(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .uaTestTag("mnemonic-verify")
             .padding(horizontal = com.rjnr.pocketnode.ui.util.screenHorizontalPadding(), vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
@@ -412,7 +414,7 @@ private fun MnemonicVerifyStep(
 
         Button(
             onClick = onVerify,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().uaTestTag("mnemonic-verify-submit"),
             enabled = verifyPositions.all { userSelections.containsKey(it) }
         ) {
             Text(stringResource(R.string.mnemonic_backup_verify))
