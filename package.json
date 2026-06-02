@@ -1,0 +1,20 @@
+{
+  "name": "pocket-node-playwright-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "playwright": "^1.54.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "apk:download": "tsx src/download-pocket-node-apk.ts",
+    "android:smoke": "tsx src/pocket-node-agent.ts",
+    "android:ci": "npm run apk:download && APK_PATH=artifacts/PocketNode-v1.7.1.apk npm run android:smoke",
+    "typecheck": "tsc --noEmit"
+  }
+}
