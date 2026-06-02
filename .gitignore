@@ -227,3 +227,11 @@ CLAUDE.md
 # schema JSON is present, Room's processor tries to deserialize it for
 # diff comparison and crashes with AbstractMethodError. (#142)
 android/app/schemas/
+
+# ===================
+# Playwright Android smoke harness
+# ===================
+node_modules/
+artifacts/
+screenshots/
+!docs/PLAYWRIGHT_AGENT.md
