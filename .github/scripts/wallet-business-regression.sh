@@ -30,7 +30,7 @@ run_case() {
 
   echo "::group::Run ${method}"
   adb shell am force-stop "$PKG" 2>/dev/null || true
-  adb shell pm clear "$PKG"
+  adb shell pm clear "$PKG" 2>/dev/null || true
   adb shell pm clear "$TEST_PKG" 2>/dev/null || true
   adb logcat -c
   adb install -r android/app/build/outputs/apk/debug/app-debug.apk >/dev/null

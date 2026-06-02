@@ -240,7 +240,7 @@ class UpgradeSmokeTest {
                 ) ?: device.findObject(By.text(text).pkg(PKG).clickable(true))
                     ?: device.findObject(By.text(text).pkg(PKG))
                     ?: return@repeat
-                node.click()
+                tapNodeCenter(node)
                 return true
             } catch (_: androidx.test.uiautomator.StaleObjectException) {
                 device.waitForIdle(200L)
@@ -332,13 +332,18 @@ class UpgradeSmokeTest {
         repeat(attempts) {
             try {
                 val node = device.findObject(By.res(res)) ?: return@repeat
-                node.click()
+                tapNodeCenter(node)
                 return true
             } catch (_: androidx.test.uiautomator.StaleObjectException) {
                 device.waitForIdle(300L)
             }
         }
         return false
+    }
+
+    private fun tapNodeCenter(node: androidx.test.uiautomator.UiObject2): Boolean {
+        val center = node.visibleCenter
+        return device.click(center.x, center.y)
     }
 
     private fun launchApp() {

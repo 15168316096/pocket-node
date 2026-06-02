@@ -232,7 +232,7 @@ class WalletBusinessRegressionTest {
                 ) ?: device.findObject(By.text(text).pkg(BUSINESS_PKG).clickable(true))
                     ?: device.findObject(By.text(text).pkg(BUSINESS_PKG))
                     ?: return@repeat
-                node.click()
+                tapNodeCenter(node)
                 return true
             } catch (_: androidx.test.uiautomator.StaleObjectException) {
                 device.waitForIdle(250L)
@@ -258,13 +258,18 @@ class WalletBusinessRegressionTest {
         repeat(attempts) {
             try {
                 val node = device.findObject(By.res(res)) ?: return@repeat
-                node.click()
+                tapNodeCenter(node)
                 return true
             } catch (_: androidx.test.uiautomator.StaleObjectException) {
                 device.waitForIdle(300L)
             }
         }
         return false
+    }
+
+    private fun tapNodeCenter(node: androidx.test.uiautomator.UiObject2): Boolean {
+        val center = node.visibleCenter
+        return device.click(center.x, center.y)
     }
 
     /** PIN digit "1" is a special case; use the same fallback strategy as clickButton. */
