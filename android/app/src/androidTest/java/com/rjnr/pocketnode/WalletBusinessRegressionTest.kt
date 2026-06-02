@@ -243,3 +243,68 @@ class WalletBusinessRegressionTest {
 
     private fun clickByRes(res: String, timeoutMs: Long = 8_000L, attempts: Int = 6): Boolean {
         if (!device.wait(Until.hasObject(By.res(res)), timeoutMs)) {
+            // Try scrolling: maybe the node is below the fold and Compose
+            // has not emitted accessibility for it yet.
+            val scrollable = device.findObject(By.scrollable(true))
+            if (scrollable != null) {
+                try {
+                    scrollable.scrollUntil(Direction.DOWN, Until.findObject(By.res(res)))
+                } catch (_: Throwable) {
+                    /* best-effort */
+                }
+            }
+            if (!device.wait(Until.hasObject(By.res(res)), 3_000L)) return false
+        }
+        repeat(attempts) {
+            try {
+                val node = device.findObject(By.res(res)) ?: return@repeat
+                node.click()
+                return true
+            } catch (_: androidx.test.uiautomator.StaleObjectException) {
+                device.waitForIdle(300L)
+            }
+        }
+        return false
+    }
+
+    /** PIN digit "1" is a special case; use the same fallback strategy as clickButton. */
+    private fun clickDigit1(timeoutMs: Long = 8_000L): Boolean =
+        clickButton("pin-keypad-1", "1", timeoutMs)
+
+    private fun tapDigit1UntilTitleChanges(
+        from: String,
+        maxTaps: Int = 12,
+        perTapDelayMs: Long = 250L,
+        postTapsTimeoutMs: Long = 90_000L,
+    ): Boolean {
+        repeat(maxTaps) {
+            if (!device.hasObject(By.text(from).pkg(BUSINESS_PKG))) return true
+            clickDigit1(timeoutMs = 2_000L)
+            device.waitForIdle(perTapDelayMs)
+        }
+
+        val deadline = System.currentTimeMillis() + postTapsTimeoutMs
+        while (System.currentTimeMillis() < deadline) {
+            if (!device.hasObject(By.text(from).pkg(BUSINESS_PKG))) return true
+            Thread.sleep(500L)
+        }
+        return false
+    }
+
+    private fun launchApp() {
+        device.pressHome()
+        val launcherPkg = device.launcherPackageName
+        assertNotNull("UiDevice.launcherPackageName is null - emulator image broken?", launcherPkg)
+        device.wait(Until.hasObject(By.pkg(launcherPkg).depth(0)), BUSINESS_LAUNCH_TIMEOUT_MS)
+
+        // Do not force-stop the target package here; instrumentation runs in the app process.
+        val intent = ctx.packageManager.getLaunchIntentForPackage(BUSINESS_PKG)!!.apply {
+            addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+        ctx.startActivity(intent)
+        assertTrue(
+            "App package $BUSINESS_PKG did not appear within $BUSINESS_LAUNCH_TIMEOUT_MS ms",
+            device.wait(Until.hasObject(By.pkg(BUSINESS_PKG).depth(0)), BUSINESS_LAUNCH_TIMEOUT_MS)
+        )
+    }
+}
